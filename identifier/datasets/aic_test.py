@@ -17,7 +17,8 @@ class aic_test(BaseImageDataset):
 
     def __init__(self, root='exp/imgs', **kwargs):
         super(aic_test, self).__init__(root)
-        self.dataset_dir = osp.join(self.root, self.dataset_dir)
+        # self.dataset_dir = osp.join(self.root, self.dataset_dir)
+        self.dataset_dir = osp.join("datasets", self.dataset_dir)
         self.query_dir = osp.join(self.dataset_dir, 'image_query')
         self.test_dir = osp.join(self.dataset_dir, 'image_test')
 

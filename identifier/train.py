@@ -139,13 +139,13 @@ def train(epoch, model, criterion_xent, criterion_htri, optimizer, trainloader, 
         accs.update(accuracy(outputs, pids)[0])
 
         if (batch_idx + 1) % args.print_freq == 0:
-            print('Epoch: [{0}][{1}/{2}]\t'
+            print('Epoch: [{0}/{1}][{2}/{3}]\t'
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Data {data_time.val:.4f} ({data_time.avg:.4f})\t'
                   'Xent {xent.val:.4f} ({xent.avg:.4f})\t'
                   'Htri {htri.val:.4f} ({htri.avg:.4f})\t'
                   'Acc {acc.val:.2f} ({acc.avg:.2f})\t'.format(
-                epoch + 1, batch_idx + 1, len(trainloader),
+                epoch + 1, args.max_epoch, batch_idx + 1, len(trainloader),
                 batch_time=batch_time,
                 data_time=data_time,
                 xent=xent_losses,
@@ -205,7 +205,8 @@ def test(model, queryloader, galleryloader, use_gpu, ranks=[1, 5, 10, 20], retur
     m, n = qf.size(0), gf.size(0)
     distmat = torch.pow(qf, 2).sum(dim=1, keepdim=True).expand(m, n) + \
               torch.pow(gf, 2).sum(dim=1, keepdim=True).expand(n, m).t()
-    distmat.addmm_(1, -2, qf, gf.t())
+    # distmat.addmm_(1, -2, qf, gf.t())
+    distmat.addmm_(qf, gf.t(), beta=1, alpha=-2)
     distmat = distmat.numpy()
 
     print('Computing CMC and mAP')
